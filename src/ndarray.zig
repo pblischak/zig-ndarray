@@ -1,7 +1,9 @@
 //! N-Dimensional Arrays in Zig.
 
 const std = @import("std");
+const zprob = @import("zprob");
 const Allocator = std.mem.Allocator;
+const RandomEnvironment = zprob.RandomEnvironment;
 
 /// A general-purpose array type with dimension `N`.
 ///
@@ -29,10 +31,11 @@ pub fn NDArray(comptime T: type, comptime N: usize) type {
 
         items: []T,
         shape: [N]usize,
+        renv: RandomEnvironment,
         allocator: Allocator,
 
         /// Initialize a new, zero-valued NDArray of type `T` with user-defined shape.
-        pub fn init(shape: [N]usize, allocator: Allocator) Allocator.Error!Self {
+        pub fn init(shape: [N]usize, allocator: Allocator) !Self {
             var size: usize = 1;
             for (shape) |s| {
                 size *= s;
@@ -47,12 +50,13 @@ pub fn NDArray(comptime T: type, comptime N: usize) type {
             return Self{
                 .items = items,
                 .shape = shape,
+                .renv = try RandomEnvironment.init(allocator),
                 .allocator = allocator,
             };
         }
 
         /// Initialize a new NDArray of type `T` with a user-specified shape and starting value.
-        pub fn initWithValue(shape: [N]usize, val: T, allocator: Allocator) Allocator.Error!Self {
+        pub fn initWithValue(shape: [N]usize, val: T, allocator: Allocator) !Self {
             var size: usize = 1;
             for (shape) |s| {
                 size *= s;
@@ -67,6 +71,7 @@ pub fn NDArray(comptime T: type, comptime N: usize) type {
             return Self{
                 .items = items,
                 .shape = shape,
+                .renv = try RandomEnvironment.init(allocator),
                 .allocator = allocator,
             };
         }
@@ -90,6 +95,7 @@ pub fn NDArray(comptime T: type, comptime N: usize) type {
             return Self{
                 .items = items_copy,
                 .shape = shape,
+                .renv = try RandomEnvironment.init(allocator),
                 .allocator = allocator,
             };
         }
@@ -111,11 +117,13 @@ pub fn NDArray(comptime T: type, comptime N: usize) type {
             return Self{
                 .items = items,
                 .shape = shape,
+                .renv = try RandomEnvironment.init(allocator),
                 .allocator = allocator,
             };
         }
 
         pub fn deinit(self: *Self) void {
+            self.renv.deinit();
             self.allocator.free(self.items);
         }
 

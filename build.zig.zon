@@ -9,4 +9,10 @@
         "src",
         "examples",
     },
+    .dependencies = .{
+        .zprob = .{
+            .url = "https://github.com/pblischak/zprob/archive/734437d2e9287b65624ba7b31f466ed30f92fa70.tar.gz",
+            .hash = "12200e840921f2199753be06fa57616ae9458bb467c5fde233a851b5556bca539ed0",
+        },
+    },
 }
