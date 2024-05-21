@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  test-zig-release:
+    name: Test Zig Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Install Zig
+        uses: goto-bus-stop/setup-zig@v2
+        with:
+          version: 0.12.0
+      - name: Run Tests
+        run: zig build test
+      - name: Check Formatting
+        run: zig fmt --check .
+  test-zig-latest:
+    name: Test Zig Latest
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Install Zig
+        uses: goto-bus-stop/setup-zig@v2
+      - name: Run Tests
+        continue-on-error: true
+        run: zig build test
+      - name: Check Formatting
+        continue-on-error: true
+        run: zig fmt --check .
+  examples:
+    name: Examples
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Install Zig
+        uses: goto-bus-stop/setup-zig@v2
+        with:
+          version: 0.12.0
+      - name: Run Basic
+        run: |
+          pushd examples/basic
+          zig build run
+          popd
+      - name: Run Operations
+        run: |
+          pushd examples/operations
+          zig build run
+          popd
