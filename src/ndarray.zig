@@ -270,7 +270,7 @@ test "NDArray" {
     var arr2 = try ArrayType.initWithValue(.{ 10, 10, 10 }, 2, std.testing.allocator);
     defer arr2.deinit();
     std.debug.print("\n{any}\n", .{arr1.shape});
-    try arr1.applyFnMut(arr2, ArrayType.subtractFnMut);
+    try arr1.applyFnMut(arr2, NumericFns(f64).subtractMut);
     std.debug.print("Value at (1, 2, 3): {}\n", .{arr1.at(.{ 0, 1, 2 })});
 }
 
