@@ -322,12 +322,23 @@ pub fn NumericFns(comptime T: type) type {
 
         pub fn divide(lhs: T, rhs: T) T {
             std.debug.assert(rhs != std.mem.zeroes(T));
-            return lhs / rhs;
+            switch (@typeInfo(T)) {
+                .Int, .ComptimeInt => {
+                    return @divTrunc(lhs, rhs);
+                },
+                else => return lhs / rhs,
+            }
         }
 
         pub fn divideMut(lhs: *T, rhs: T) void {
             std.debug.assert(rhs != std.mem.zeroes(T));
-            lhs.* /= rhs;
+            switch (@typeInfo(T)) {
+                .Int, .ComptimeInt => {
+                    const val: T = @divTrunc(lhs.*, rhs);
+                    lhs.* = val;
+                },
+                else => lhs.* /= rhs,
+            }
         }
     };
 }
