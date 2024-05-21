@@ -340,4 +340,51 @@ fn isNumericType(comptime T: type) bool {
     };
 }
 
-test "Numeric Functions" {}
+test "Numeric Functions" {
+    const int_types = [_]type{ u8, u16, u32, u64, u128, i8, i16, i32, i64, i128 };
+    const float_types = [_]type{ f16, f32, f64, f128 };
+
+    inline for (int_types) |I| {
+        var val: I = 4;
+        try std.testing.expectEqual(NumericFns(I).add(val, 2), 6);
+        NumericFns(I).addMut(&val, 2);
+        try std.testing.expectEqual(val, 6);
+
+        // val = 6
+        try std.testing.expectEqual(NumericFns(I).subtract(val, 3), 3);
+        NumericFns(I).subtractMut(&val, 3);
+        try std.testing.expectEqual(val, 3);
+
+        // val = 3
+        try std.testing.expectEqual(NumericFns(I).multiply(val, 4), 12);
+        NumericFns(I).multiplyMut(&val, 4);
+        try std.testing.expectEqual(val, 12);
+
+        // val = 12
+        try std.testing.expectEqual(NumericFns(I).divide(val, 2), 6);
+        NumericFns(I).divideMut(&val, 2);
+        try std.testing.expectEqual(val, 6);
+    }
+
+    inline for (float_types) |F| {
+        var val: F = 4.0;
+        try std.testing.expectEqual(NumericFns(F).add(val, 2), 6.0);
+        NumericFns(F).addMut(&val, 2.0);
+        try std.testing.expectEqual(val, 6.0);
+
+        // val = 6.0
+        try std.testing.expectEqual(NumericFns(F).subtract(val, 3.0), 3.0);
+        NumericFns(F).subtractMut(&val, 3.0);
+        try std.testing.expectEqual(val, 3.0);
+
+        // val = 3.0
+        try std.testing.expectEqual(NumericFns(F).multiply(val, 4.0), 12.0);
+        NumericFns(F).multiplyMut(&val, 4.0);
+        try std.testing.expectEqual(val, 12.0);
+
+        // val = 12.0
+        try std.testing.expectEqual(NumericFns(F).divide(val, 2.0), 6.0);
+        NumericFns(F).divideMut(&val, 2.0);
+        try std.testing.expectEqual(val, 6.0);
+    }
+}
