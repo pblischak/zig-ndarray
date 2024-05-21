@@ -74,7 +74,7 @@ pub fn NDArray(comptime T: type, comptime N: usize) type {
         /// Initialize a new NDArray of type `T` with a user-defined shape and a slice of values.
         /// The length of the slice and the computed size of the NDArray must be compatible.
         /// The values of the slice are `memcopy`'d into the `NDArray`.
-        pub fn initFromSlice(shape: [N]usize, items: []const T, allocator: Allocator) Error!Self {
+        pub fn fromCopiedSlice(shape: [N]usize, items: []const T, allocator: Allocator) !Self {
             var size: usize = 1;
             for (shape) |s| {
                 size *= s;
@@ -96,11 +96,9 @@ pub fn NDArray(comptime T: type, comptime N: usize) type {
 
         /// Initialize a new NDArray of type `T` with a user-defined shape and a slice of values.
         /// The length of the slice and the computed size of the NDArray must be compatible.
-        /// Note that here there is no copying of the slice values, so the lifetime of the slice
-        /// may be determined outside of the lifetime of the NDArray. Calling `free` on the slice
-        /// will invalidate the NDArray. Likewise, calling `NDArray(T, N).deinit()` will invalidate
-        /// the original slice, so it must be ensured that the slice is only freed once.
-        pub fn initFromBorrowedSlice(shape: [N]usize, items: []const T, allocator: Allocator) Error!void {
+        /// Note that here there is no copying of the slice values, so ownership is passed to
+        /// the NDArray.
+        pub fn fromOwnedSlice(shape: [N]usize, items: []const T, allocator: Allocator) !void {
             var size: usize = 1;
             for (shape) |s| {
                 size *= s;
@@ -276,7 +274,7 @@ test "NDArray" {
 
 test "Init NDArray from Slice" {}
 
-test "Init NDArray from Borrowed Slice" {}
+test "Init NDArray from Owned Slice" {}
 
 /// Arithmetic functions (`+`, `-`, `*`, `/`) for `NDArray`s with numeric types. Can be passed to
 /// an `NDArray(T, N).apply*` function with a matching signature.
