@@ -1,4 +1,4 @@
-# Multidimensional Arrays in Zig
+# N-Dimensional Arrays in Zig
 
 
 
