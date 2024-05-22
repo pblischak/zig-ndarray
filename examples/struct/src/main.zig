@@ -1,5 +1,6 @@
 const std = @import("std");
 const NDArray = @import("ndarray").NDArray;
+const RandomEnvironment = @import("zprob").RandomEnvironment;
 
 const Point = struct {
     x: f64,
@@ -21,10 +22,15 @@ const Point = struct {
     }
 };
 
-pub fn main() !void {}
-
-test "NDArray of Points" {
-    const allocator = std.testing.allocator;
+pub fn main() !void {
+    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    const allocator = gpa.allocator();
+    defer {
+        const status = gpa.deinit();
+        std.testing.expect(status == .ok) catch {
+            @panic("Memory leak!");
+        };
+    }
     var arr1 = try NDArray(Point, 2).initWithValue(
         .{ 10, 10 },
         Point{ .x = 1.0, .y = 2.0, .z = 3.0 },
