@@ -55,3 +55,8 @@ jobs:
           pushd examples/operations
           zig build run
           popd
+      - name: Run Struct
+        run: |
+          pushd examples/struct
+          zig build run
+          popd
