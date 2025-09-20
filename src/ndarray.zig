@@ -321,7 +321,7 @@ pub fn NumericFns(comptime T: type) type {
         pub fn divide(lhs: T, rhs: T) T {
             std.debug.assert(rhs != std.mem.zeroes(T));
             switch (@typeInfo(T)) {
-                .Int, .ComptimeInt => {
+                .int, .comptime_int => {
                     return @divTrunc(lhs, rhs);
                 },
                 else => return lhs / rhs,
@@ -331,7 +331,7 @@ pub fn NumericFns(comptime T: type) type {
         pub fn divideMut(lhs: *T, rhs: T) void {
             std.debug.assert(rhs != std.mem.zeroes(T));
             switch (@typeInfo(T)) {
-                .Int, .ComptimeInt => {
+                .int, .comptime_int => {
                     const val: T = @divTrunc(lhs.*, rhs);
                     lhs.* = val;
                 },
@@ -344,7 +344,7 @@ pub fn NumericFns(comptime T: type) type {
 /// Comptime check that `T` is a numeric type.
 fn isNumericType(comptime T: type) bool {
     return switch (@typeInfo(T)) {
-        .Int, .ComptimeInt, .Float, .ComptimeFloat => true,
+        .int, .comptime_int, .float, .comptime_float => true,
         else => false,
     };
 }
